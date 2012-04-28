@@ -1,0 +1,236 @@
+                              SimpleChat Protocol Definitions
+                              By: Joshua Bowden
+
+== Notes ==
+
+Discription
+
+   This docuement will explain the login and the protocol on how the client and server computers 
+   will work and communicate with each other.
+
+Pre-Release Information
+
+   Since this documentation will be covering an early version of the software, it will be subject
+   to any changes that may be make later at time.
+
+Format
+
+   The way that commands will be show is as follows:
+   - Required = [param]
+   - Optional = {param}
+
+   In the examples, other than the actual command, there may be additional information that is not
+   to be included with the actual message. Examples can include:
+   - Group headers
+     ex: Header -
+   - Sender name
+     ex: jaxrtech ->
+
+== Documentation ==
+
+Message Codes
+
+   When the server recieves a command, it may need to send a code back to indicate the status of the
+   command that was entered. Bellow is a list of the command codes that can be sent from the server
+   and for what reason why.
+
+   The message code system will be using the standard range set of the codes that are used in IETF.
+   The point of these are so that the client will know if the command succeeded or not. Depending on
+   the command, the server will have a set of commands that it will be able to send back in responce
+   though not all
+
+
+
+Commands
+
+ = Login Commands
+
+1. JOIN
+   - Discription
+   Allows a user to join the server
+
+   - Format
+   JOIN [username] :[firstName] [lastName]
+
+   - Example
+   JOIN jaxrtech :Joshua Bowden
+
+   - Parameters
+   username  - the name that the user will be logically stored as
+   firstName - the first name of the user
+   lastName  - the last name of the user
+
+   - Purpose
+   JOIN will attempt to have the user join the server. This is the first thing that the client will 
+   have to do by authenticating the user through the server. The purpose of this is so that the 
+   server will be able to know who the connecting client is and allow the server to notify the 
+   connecting user if they are unautherized to connect to the server.
+
+   - Responces
+   If the logging in username is link to an op account, it will need to be authorized with a
+   password using the AUTH command.
+
+2. LEAVE
+   - Discription
+   Properly disconnect from the server
+
+   - Format
+   LEAVE
+
+   - Parameters
+   (none)
+
+   - Purpose
+   LEAVE is the proper way to tell the server that the connected user wants to leave the room. This
+   will then disconnect the user from the server
+
+2. AUTH
+   - Discription
+   Authorizes an op to join the server
+
+   - Format
+   AUTH [username] [password]
+
+   - Example
+   AUTH jaxrtech e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+   - Parameters
+   username - the name that the user will be logically stored as
+!  password - a hash of the password (might be SHA256 with some salt or something)
+
+   - Purpose
+   AUTH authenticates an op of the server because an op must be authenticated through the server 
+   using a password so they will have additional security to prevent their account from getting 
+   hacked in to. This will only be called after a JOIN command has been ran from the user
+
+ = Messaging Commands
+
+4. MSG
+   - Discription
+   Send a message to all the connected users
+
+   - Format
+   MSG :[message]
+
+   - Example
+   MSG :Hello world
+
+   - Parameters
+   message - the message to send
+
+   - Purpose
+   MSG sends and broadcasts messages to all currently connected users on the sever
+
+5. PVMSG
+   - Discription
+   Sends a private message to a specified user
+
+   - Format
+   PVMSG [username] :[message]
+
+   - Example
+   jaxrtech -> PVMSG john27 :I need to tell you something
+   john27   -> PVMSG jaxrtech :What is it?
+
+   - Paramets
+   username - the username of the receiving client
+   message  - the message to send
+
+   - Purpose
+   PVMSG send a message from one user to a certain user without other connected users receiving it
+
+ = Administative Commands
+
+6. KICK
+   - Discription
+   Disconnects a user from the server
+
+   - Format
+   KICK [username] {:reason}
+
+   - Examples
+   KICK john27
+   KICK sillyPerson56 :Please do not spam the chat
+
+   - Paremeters
+   username - the username of the user to disconnect
+   reason   - the reson why the user was disocnnected
+
+   - Purpose
+   KICK allows ops to disconnect offensive users from the server
+
+7. BAN
+   - Discription
+   Disallow a user from connecting to the server
+
+   - Format
+   BAN [username] {time} {:reason}
+
+   - Example
+   Permanent - BAN john27
+               BAN sillyPerson56 :You have been banned for offensive behavior
+   Temporary - BAN john27 2012-09-12 20:45:30Z
+               BAN sillyPerson56 2012-09-12 20:45:30Z :You have been banned for offensive behavior
+
+   - Parameters
+   username - the username of the user to ban
+   time     - the time when then ban ends in ISO 8601 format. if this is left out it will be a 
+               permanent or indefinite ban otherwise it will be a temporary ban
+   reason   - the reason why the user was banned. optional
+
+   - Purpose
+   BAN allows ops to be able to keep specified users from being able to join the server because of 
+   any reason whether it be offensive or otherwise
+
+8. UNBAN
+   - Discription
+   Allow a previously banned user to connect to the server
+
+   - Format
+   UNBAN [username] {:reason}
+
+   - Examples
+   UNBAN john27
+   UNBAN sillyPerson56 :Please make sure to watch you language
+
+   - Parameters
+   username - the username of the user to unban
+   reason   - the reason why the user was unbanned. optional
+
+   - Purpose
+   UNBAN allows ops to be able to lift a ban from a users enableing them to be able to join the 
+   server like a normal user
+
+9. OP
+   - Discription
+   Give a user administative privalages
+
+   - Format
+   OP [username]
+
+   - Example
+   OP jaxrtech
+
+   - Paremeters
+   username - the username of the user to op
+
+   - Purpose
+   OP grants a user adminitative privalages so that they can use admin commands in addition to the
+   normal commands
+
+10. DEOP
+   - Discription
+   Takes a user's administative privalages
+
+   - Format
+   DEOP [username]
+
+   - Example
+   DEOP john27
+
+   - Paremeters
+   username - the username of the user to deop
+
+   - Purpose
+   DEOP takes a user's adminitative privalages away so that the user can no longer use admin 
+   commands and now can only use normal user commands
