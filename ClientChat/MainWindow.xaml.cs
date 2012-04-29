@@ -16,6 +16,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.Windows.Shell;
 
 namespace ClientChat
 {
@@ -33,12 +34,28 @@ namespace ClientChat
         string Username;
         List<string> UserList = new List<string>();
         bool IsActiveWindow = false;
+        bool _UnreadMessages = false;
+        bool UnreadMessages
+        {
+            get { return _UnreadMessages; }
+            set { 
+                _UnreadMessages = value;
+                if (_UnreadMessages)
+                {
+                    this.TaskbarItemInfo.Overlay = new BitmapImage(new Uri("pack://application:,,,/Resources/mail.png"));
+                    //this.TaskbarItemInfo.Overlay = (DrawingImage)this.FindResource("Resources/mail.png");
+                }
+                else
+                    this.TaskbarItemInfo.Overlay = null;
+            }
+        }
 
         public MainWindow()
         {
-            Connection = new Client(this);
-
             InitializeComponent();
+
+            Connection = new Client(this);
+            TaskbarItemInfo = new TaskbarItemInfo();
         }
 
         public void LogMessage(string text)
@@ -126,6 +143,8 @@ namespace ClientChat
                         {
                             NotificationWindow notificaiton = new NotificationWindow(message, this);
                             notificaiton.Show();
+
+                            UnreadMessages = true;
                         }
                     ));
                 }
@@ -223,6 +242,7 @@ namespace ClientChat
         private void Window_Activated(object sender, EventArgs e)
         {
             IsActiveWindow = true;
+            UnreadMessages = false;
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
