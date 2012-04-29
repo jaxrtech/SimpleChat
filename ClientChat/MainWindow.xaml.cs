@@ -31,6 +31,8 @@ namespace ClientChat
         int Port;
         bool IsLoggingIn = true;
         string Username;
+        List<string> UserList = new List<string>();
+        bool IsActiveWindow = false;
 
         public MainWindow()
         {
@@ -43,39 +45,38 @@ namespace ClientChat
         {
             if (!Log.Dispatcher.CheckAccess())
             {
-                Log.Dispatcher.Invoke(
-                  DispatcherPriority.Normal,
-                  new Action(
+                Log.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
                     delegate()
                     {
-                        LogMessageBase(text);
+                        LogMessageBase(text, new SolidColorBrush(Colors.Black));
                     }
                 ));
             }
             else
             {
-                LogMessageBase(text);
+                LogMessageBase(text, new SolidColorBrush(Colors.Black));
             }
 
         }
 
-        private void LogMessageBase(string text)
+        private void LogMessageBase(string text, Brush color)
         {
-            // Only add a line return if the log is not empty
-            string newLine = (Log.Text == "") ? "" : "\n";
-            Log.AppendText(newLine + text);
-            // SCroll to the bottom
-            Log.CaretIndex = Log.Text.Length;
-            Log.ScrollToEnd();
+            Paragraph paragraph = new Paragraph();
+            paragraph.Margin = new Thickness(0);
+            // Add it to the paragraph and then to the log
+            Run run = new Run(text);
+            run.Foreground = color;
+            paragraph.Inlines.Add(run);
+            Log.Blocks.Add(paragraph);
+            // Scroll to the bottom
+            LogContainer.ScrollToEnd();
         }
 
         private void UpdateTitle()
         {
             if (!Log.Dispatcher.CheckAccess())
             {
-                Log.Dispatcher.Invoke(
-                  DispatcherPriority.Normal,
-                  new Action(
+                Log.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
                     delegate()
                     {
                         this.Title = "SimpleChat - " + Username;
@@ -109,27 +110,26 @@ namespace ClientChat
         public void OnReceive(ConnectionState state)
         {
             string message = TextEncoder.Decode(state.Buffer, state.Length);
-            //if (message.StartsWith("LIST ")) // user list (TODO)
-            //{
-            //    message.Replace("LIST ", "");
-            //    string[] names = message.Split(',');
-            //    message = "Current users: ";
-            //    int i = 0;
-            //    int max = names.Length;
-            //    foreach (var name in names)
-            //    {
-            //        if (i == 0 || i == max) // first or last
-            //        {
-            //            message += name;
-            //        }
-            //        else if (i > 0 && i < max - 1) // in the middle
-            //        {
-            //            message += ", " + name;
-            //        }
-            //        i++;
-            //    }
-            //}
-            LogMessage(message);
+            if (message.StartsWith("LIST ")) // user list (TODO)
+            {
+                string name = message.Replace("LIST ", "");
+                UserList.Add(name);
+            }
+            else
+            {
+                LogMessage(message);
+                // Check if notification is needed
+                if (!IsActiveWindow)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
+                        delegate()
+                        {
+                            NotificationWindow notificaiton = new NotificationWindow(message, this);
+                            notificaiton.Show();
+                        }
+                    ));
+                }
+            }
 
             Debug.WriteLine("<-" + message);
         }
@@ -218,6 +218,16 @@ namespace ClientChat
 
             Connection.Disconnect();
             //DisconnectWait.WaitOne();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            IsActiveWindow = true;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            IsActiveWindow = false;
         }
     }
 }

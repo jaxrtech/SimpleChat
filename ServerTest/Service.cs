@@ -60,26 +60,13 @@ namespace ServerTest
 
         private void SendUserList(Socket client)
         {
-            // Make list
-            string users = "";
-            int i = 0;
-            int max = Program.ServerManager.Clients.Count;
+            const string command = "LIST ";
             foreach (var user in Program.ServerManager.Clients)
             {
-                if (i == 0 || i == max) // first or last
-                {
-                    users += user.Name;
-                }
-                else if (i > 0 && i < max - 1) // in the middle
-                {
-                    users += "," + user.Name;
-                }
-                i++;
+                string message = command + user.Name;
+                byte[] data = TextEncoder.Encode(message);
+                Program.ServerManager.Send(data, client);
             }
-            // Send it
-            string message = "LIST " + users;
-            byte[] data = TextEncoder.Encode(message);
-            Program.ServerManager.Send(data, client);
         }
 
         public void OnDisconnect(ConnectionState state)
