@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using System.Windows.Shell;
 using System.Windows.Interop;
+using System.Globalization;
 
 namespace ClientChat
 {
@@ -142,7 +143,11 @@ namespace ClientChat
             }
             else
             {
-                LogMessage(message);
+                // Add time stamp on it
+                DateTime now = DateTime.Now;
+                string date = now.ToString("[MMM dd hh:mm tt]", CultureInfo.InvariantCulture);
+                LogMessage(date + " " + message);
+
                 Debug.WriteLine("Message recieved");
                 // Check if notification is needed
 
