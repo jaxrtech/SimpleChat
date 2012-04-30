@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Forms;
 
 namespace ClientChat
 {
@@ -27,16 +26,8 @@ namespace ClientChat
 
             this.Message.Text = message;
 
-            Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(
-                delegate()
-                {
-                    var workingArea = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
-                    var transform = PresentationSource.FromVisual(this).CompositionTarget.TransformFromDevice;
-                    var corner = transform.Transform(new Point(workingArea.Right, workingArea.Bottom));
-
-                    this.Left = corner.X - this.ActualWidth - 30;
-                    this.Top = corner.Y - this.ActualHeight - 30;
-                }));
+            this.Top = SystemParameters.PrimaryScreenHeight - this.Height - 50;
+            this.Left = SystemParameters.PrimaryScreenWidth - this.Width - 20;
         }
 
         private void Storyboard_Completed(object sender, EventArgs e)
@@ -46,7 +37,7 @@ namespace ClientChat
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            System.Windows.Application.Current.MainWindow.WindowState = WindowState.Normal;
+            Application.Current.MainWindow.WindowState = WindowState.Normal;
             this.Close();
         }
 

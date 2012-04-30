@@ -17,6 +17,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Diagnostics;
 using System.Windows.Shell;
+using System.Windows.Interop;
 
 namespace ClientChat
 {
@@ -33,20 +34,27 @@ namespace ClientChat
         bool IsLoggingIn = true;
         string Username;
         List<string> UserList = new List<string>();
-        bool IsActiveWindow = false;
+        BitmapImage MailIcon = new BitmapImage(new Uri("pack://application:,,,/Resources/mail.png"));
+        bool IsNotificationShown = false;
         bool _UnreadMessages = false;
         bool UnreadMessages
         {
             get { return _UnreadMessages; }
-            set { 
+            set
+            {
                 _UnreadMessages = value;
                 if (_UnreadMessages)
                 {
-                    this.TaskbarItemInfo.Overlay = new BitmapImage(new Uri("pack://application:,,,/Resources/mail.png"));
+                    this.TaskbarItemInfo.Overlay = MailIcon;
+                    Debug.WriteLine("Taskbar overlay set");
                     //this.TaskbarItemInfo.Overlay = (DrawingImage)this.FindResource("Resources/mail.png");
                 }
                 else
+                {
                     this.TaskbarItemInfo.Overlay = null;
+                    Debug.WriteLine("Taskbar overlay reset");
+                }
+                    
             }
         }
 
@@ -135,22 +143,36 @@ namespace ClientChat
             else
             {
                 LogMessage(message);
+                Debug.WriteLine("Message recieved");
                 // Check if notification is needed
-                if (!IsActiveWindow)
-                {
-                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
-                        delegate()
+
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
+                    delegate()
+                    {
+                        Debug.WriteLine("Is currently active window: " + this.IsActive);
+                        if (!this.IsActive)
                         {
+                            Debug.WriteLine("Notification shown");
                             NotificationWindow notificaiton = new NotificationWindow(message, this);
                             notificaiton.Show();
-
+                            IsNotificationShown = true;
                             UnreadMessages = true;
+                            Flash();
+                            Debug.WriteLine("Notifications enabled");
                         }
-                    ));
-                }
+                    }
+                ));
             }
 
             Debug.WriteLine("<-" + message);
+        }
+
+        private void Flash()
+        {
+            //The Flash-methods now take a handle.
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+
+            FlashWindow.Flash(hwnd, 20);
         }
 
         public void OnDisconnect(ConnectionState state)
@@ -241,13 +263,13 @@ namespace ClientChat
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            IsActiveWindow = true;
-            UnreadMessages = false;
-        }
-
-        private void Window_Deactivated(object sender, EventArgs e)
-        {
-            IsActiveWindow = false;
+            Debug.WriteLine("Active but nothing shown");
+            if (IsNotificationShown)
+            {
+                UnreadMessages = false;
+                IsNotificationShown = false;
+                Debug.WriteLine("Notifications disabled");
+            }
         }
     }
 }

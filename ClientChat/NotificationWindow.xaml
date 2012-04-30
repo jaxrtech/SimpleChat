@@ -5,7 +5,7 @@
         AllowsTransparency="True" Background="Transparent" WindowStyle="None" ShowInTaskbar="False">
     <Grid RenderTransformOrigin="0,1" >
         <!-- Notification area -->
-        <Border BorderThickness="1" Background="LightSteelBlue" BorderBrush="Black" CornerRadius="5" MouseDown="Border_MouseDown">
+        <Border BorderThickness="1" Background="LightSteelBlue" BorderBrush="Black" CornerRadius="2" MouseDown="Border_MouseDown">
             <StackPanel Margin="10">
                 <TextBlock TextWrapping="Wrap">
                 <Bold><Run FontSize="14">SimpleChat - New Message</Run></Bold>
