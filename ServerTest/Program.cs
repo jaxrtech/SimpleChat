@@ -11,13 +11,16 @@ namespace ServerTest
     {
         public static Server ServerManager;
         static ServerService Service = new ServerService();
+        static int Port;
 
         static void Main(string[] args)
         {
             Console.WriteLine("SimpleChat Server");
             Console.WriteLine("By: Joshua Bowden");
-            Addresses();
+
             Service.Log("Started server");
+            Addresses();
+            
             Thread wait = new Thread(new ThreadStart(Wait));
             Thread client = new Thread(new ThreadStart(Start));
             wait.Start();
@@ -49,33 +52,38 @@ namespace ServerTest
 
         static void Addresses()
         {
-            Console.WriteLine("Local address:    " + Address.LocalIP);
+            Service.Log("Local address:    " + Address.LocalIP);
             string external = "Invalid";
-            if (Address.ExternalIP == null) external = "Invalid";
-            else external = Address.ExternalIP.ToString();
-            Console.WriteLine("External address: " + external);
+            if (Address.ExternalIP == null) 
+                external = "Invalid";
+            else 
+                external = Address.ExternalIP.ToString();
+            Service.Log("External address: " + external);
         }
 
         static void Start()
         {
             ServerManager = new Server(Service);
-            int port = Globals.Port;
+            //int port = Globals.Port;
             // Port number
-            //Console.Write("Port (press enter for default on {0}): ", Globals.Port);
-            //string port = Console.ReadLine();
-            //int portNum = 0;
-            //if (port == "") portNum = Globals.Port;
-            //else
-            //{
-            //    while (!int.TryParse(port, out portNum))
-            //    {
-            //        Console.WriteLine("ERROR: Port invalid. Port: ");
-            //        port = Console.ReadLine();
-            //    }
-            //}
-            ServerManager.Start(port);
-            string log = string.Format("Listening on port {0}", port);
-            Service.Log(log);
+            Console.Write("Port (press enter for default on {0}): ", Globals.Port);
+            string portString = Console.ReadLine();
+            if (portString == "")
+            {
+                Port = Globals.Port;
+            }
+            else
+            {
+                while (!int.TryParse(portString, out Port))
+                {
+                    Console.WriteLine("ERROR: Port invalid. Port: ");
+                    portString = Console.ReadLine();
+                }
+            }
+
+            // Start
+            ServerManager.Start(Port);
+            Service.Log(string.Format("Listening on port {0}", Port));
         }
     }
 }

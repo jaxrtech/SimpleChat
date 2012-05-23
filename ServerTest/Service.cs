@@ -6,11 +6,65 @@ using ChatLib;
 using System.Net;
 using System.Net.Sockets;
 using System.Globalization;
+using System.IO;
 
 namespace ServerTest
 {
     public class ServerService : IServerService
     {
+        string LogFileName = "log.txt";
+
+        public ServerService()
+        {
+            // Buggy:
+            //LogFileName = GetLogFileName();
+        }
+
+        private string GetLogFileName()
+        {
+            // Get last log file number
+            List<string> files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.txt").ToList<string>();
+            List<int> numbers = new List<int>();
+            int max = 0;
+
+            // Remove all except log files
+            foreach (string file in files)
+            {
+                if (file.StartsWith("log", true, CultureInfo.InvariantCulture))
+                {
+                    string[] split = file.Split("-".ToCharArray());
+                    int num;
+                    if (int.TryParse(split[1], out num))
+                        numbers.Add(num);
+                }
+                else files.Remove(file);
+            }
+
+            // Get highest number
+            foreach (int num in numbers)
+            {
+                max = Math.Max(max, num);
+            }
+
+            return "log-" + max + ".txt";
+        }
+
+        public void Log(string text)
+        {
+            DateTime now = DateTime.Now;
+            string date = now.ToString("[yyyy-MM-dd HH:mm:ss]", CultureInfo.InvariantCulture);
+            string log = date + " " + text;
+            Console.WriteLine(log);
+
+            using (StreamWriter file = File.AppendText(LogFileName))
+            {
+                file.AutoFlush = true;
+                file.WriteLine(log);
+                file.Flush();
+                // it will close and release once done executing
+            }
+        }
+
         public void OnAccept(ConnectionState state)
         {
             try
@@ -111,13 +165,6 @@ namespace ServerTest
             {
                 Log(string.Format("Error : {0}", state.Error.Message));
             }
-        }
-
-        public void Log(string log)
-        {
-            DateTime now = DateTime.Now;
-            string date = now.ToString("[yyyy-MM-dd HH:mm:ss]", CultureInfo.InvariantCulture);
-            Console.WriteLine(date + " " + log);
         }
     }
 }
