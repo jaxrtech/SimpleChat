@@ -9,14 +9,18 @@ namespace ServerTest
 {
     public class Program
     {
+        const string ProductName = "SimepleChat Server";
+        const string Author = "Joshua Bowden";
+
         public static Server ServerManager;
         static ServerService Service = new ServerService();
         static int Port;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("SimpleChat Server");
-            Console.WriteLine("By: Joshua Bowden");
+            Console.Title = ProductName;
+            Console.WriteLine(ProductName);
+            Console.WriteLine("By: " + Author);
 
             Service.Log("Started server");
             Addresses();
@@ -82,6 +86,7 @@ namespace ServerTest
             }
 
             // Start
+            Console.Title = ProductName + " - " + Port;
             ServerManager.Start(Port);
             Service.Log(string.Format("Listening on port {0}", Port));
         }
