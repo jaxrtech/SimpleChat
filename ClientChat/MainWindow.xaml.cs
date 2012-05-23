@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ChatLib;
+using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Threading;
-using System.Windows.Threading;
-using System.Diagnostics;
-using System.Windows.Shell;
+using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Interop;
-using System.Globalization;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shell;
+using System.Windows.Threading;
+using ChatLib;
 
 namespace ClientChat
 {
@@ -200,9 +193,9 @@ namespace ClientChat
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (dialog.ShowDialog() == true)
             {
-                Address = dialog.ServerAddress;
+                Address = dialog.ServerAddressRaw;
                 IPAddress = dialog.IPAddress;
-                Port = Globals.Port;
+                Port = dialog.Port;
                 Username = dialog.FirstName + " " + dialog.LastName;
                 Thread start = new Thread(new ThreadStart(Connect));
                 start.Start();

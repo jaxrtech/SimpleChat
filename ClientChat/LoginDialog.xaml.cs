@@ -23,7 +23,11 @@ namespace ClientChat
     {
         public IPAddress IPAddress { get; private set; }
 
-        public string ServerAddress
+        public int Port { get; private set; }
+
+        public string ServerAddress { get; private set; }
+
+        public string ServerAddressRaw
         {
             get { return AddressTextBox.Text; }
         }
@@ -48,25 +52,59 @@ namespace ClientChat
         private void Login_Click(object sender, RoutedEventArgs e)
         {
             // Make sure that nothing is empty
-            if (ServerAddress == string.Empty || FirstName == string.Empty || LastName == string.Empty)
+            if (string.IsNullOrWhiteSpace(ServerAddressRaw) || string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName))
             {
                 MessageBox.Show("A field is empty.\nMake sure that you completed them all", "Login",
                     MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
             else
             {
+                bool valid = true;
                 // Remove any trialing spaces on user's name
                 FirstNameTextBox.Text = FirstNameTextBox.Text.Trim(' ');
                 LastNameTextBox.Text = LastNameTextBox.Text.Trim(' ');
-                // Validate the address
-                IPAddress ip;
-                if (Address.TryParseAddress(ServerAddress, out ip))
+
+                // Split the IP with the port number
+                string[] address = ServerAddressRaw.Split(":".ToCharArray(), 2);
+                ServerAddress = address[0];
+
+                // Port
+                if (address.Length == 1) // address only
                 {
-                    IPAddress = ip;
-                    SaveSettings();
-                    this.DialogResult = true;
+                    Port = Globals.Port;
                 }
-                else
+                else // with port
+                {
+                    int port;
+                    if (int.TryParse(address[1], out port))
+                    {
+                        Port = port;
+                    }
+                    else
+                    {
+                        valid = false;
+                    }
+                }
+
+                // IP address
+                if (valid)
+                {
+                    // Validate the address
+                    IPAddress ip;
+                    if (Address.TryParseAddress(ServerAddress, out ip))
+                    {
+                        IPAddress = ip;
+                        SaveSettings();
+                        this.DialogResult = true;
+                    }
+                    else
+                    {
+                        valid = false;
+                    }
+                }
+
+                // Return error message if invalid
+                if (!valid)
                 {
                     MessageBox.Show("The server address is invalid.\nMake sure that you entered it correctly and you are connected to the internet", "Login",
                         MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -95,7 +133,7 @@ namespace ClientChat
 
         private void SaveSettings()
         {
-            Settings.Default.Address = ServerAddress;
+            Settings.Default.Address = ServerAddressRaw;
             Settings.Default.FirstName = FirstName;
             Settings.Default.LastName = LastName;
             Settings.Default.Save();

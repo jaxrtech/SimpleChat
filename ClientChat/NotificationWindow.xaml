@@ -15,7 +15,7 @@
             </StackPanel>
         </Border>
 
-        <Button Name="Close" Width="20" Height="20" Foreground="DarkBlue" Content="X"  HorizontalAlignment="Right" VerticalAlignment="Top" Background="White" Click="Close_Click"/>
+        <Button Name="CloseButton" Width="20" Height="20" Foreground="DarkBlue" Content="X"  HorizontalAlignment="Right" VerticalAlignment="Top" Background="White" Click="Close_Click"/>
         
         <!-- Animation -->
         <Grid.Triggers>

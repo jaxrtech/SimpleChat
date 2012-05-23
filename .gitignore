@@ -8,4 +8,5 @@ publish/
 *.user
 *.suo
 *.bak
+*.cache
 *.log

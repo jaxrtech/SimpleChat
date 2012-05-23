@@ -40,19 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Address.cs" />
-    <Compile Include="ClientService.cs" />
-    <Compile Include="TextEncoder.cs" />
-    <Compile Include="ServerService.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="IClientService.cs" />
-    <Compile Include="ConnectionState.cs" />
+    <Compile Include="Logic\Address.cs" />
+    <Compile Include="Logic\ClientService.cs" />
+    <Compile Include="Logic\IServerNotification.cs" />
+    <Compile Include="Logic\TextEncoder.cs" />
+    <Compile Include="Logic\ServerService.cs" />
+    <Compile Include="Logic\Client.cs" />
+    <Compile Include="Logic\IClientService.cs" />
+    <Compile Include="Logic\ConnectionState.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs" />
-    <Compile Include="IServerService.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="Logic\Server.cs" />
+    <Compile Include="Logic\IServerService.cs" />
+    <Compile Include="Logic\User.cs" />
+    <Compile Include="Protocol\ProtocolCommand.cs" />
+    <Compile Include="Protocol\ProtocolParameter.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
