@@ -56,13 +56,13 @@ namespace ServerTest
             string log = date + " " + text;
             Console.WriteLine(log);
 
-            using (StreamWriter file = File.AppendText(LogFileName))
-            {
-                file.AutoFlush = true;
-                file.WriteLine(log);
-                file.Flush();
-                // it will close and release once done executing
-            }
+            //using (StreamWriter file = File.AppendText(LogFileName))
+            //{
+            //    file.AutoFlush = true;
+            //    file.WriteLine(log);
+            //    file.Flush();
+            //    // it will close and release once done executing
+            //}
         }
 
         public void OnAccept(ConnectionState state)
