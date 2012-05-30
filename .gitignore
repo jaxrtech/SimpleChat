@@ -10,3 +10,5 @@ publish/
 *.bak
 *.cache
 *.log
+*.psess
+*.vsp
