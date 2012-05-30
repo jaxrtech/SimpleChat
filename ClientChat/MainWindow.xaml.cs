@@ -48,7 +48,45 @@ namespace ClientChat
                     this.TaskbarItemInfo.Overlay = null;
                     Debug.WriteLine("Taskbar overlay reset");
                 }
-                    
+
+            }
+        }
+
+        string StatusMessage
+        {
+            get
+            {
+                if (!Status.Dispatcher.CheckAccess())
+                {
+                    string text = "";
+                    Status.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
+                        delegate()
+                        {
+                            text = Status.Text;
+                        }
+                    ));
+                    return text;
+                }
+                else
+                {
+                    return Status.Text;
+                }
+            }
+            set
+            {
+                if (!Status.Dispatcher.CheckAccess())
+                {
+                    Status.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(
+                        delegate()
+                        {
+                            Status.Text = value;
+                        }
+                    ));
+                }
+                else
+                {
+                    Status.Text = value;
+                }
             }
         }
 
@@ -75,7 +113,6 @@ namespace ClientChat
             {
                 LogMessageBase(text, new SolidColorBrush(Colors.Black));
             }
-
         }
 
         private void LogMessageBase(string text, Brush color)
@@ -120,7 +157,7 @@ namespace ClientChat
             IsLoggingIn = false;
             IPEndPoint endPoint = state.Connection.RemoteEndPoint as IPEndPoint;
             string message = "Connected to server";
-            LogMessage(message);
+            StatusMessage = message;
             // Send the clients name so that the server knows that user is there
             byte[] data = TextEncoder.Encode("JOIN " + Username);
             Connection.Send(data);
@@ -175,14 +212,14 @@ namespace ClientChat
 
         public void OnDisconnect(ConnectionState state)
         {
-            LogMessage("Disconnected from server");
+            StatusMessage = "Disconnected from server";
             DisconnectWait.Set();
         }
 
         public void OnError(ConnectionState state)
         {
             string message = string.Format("Error: {0}", state.Error.Message);
-            LogMessage(message);
+            StatusMessage = message;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -193,14 +230,14 @@ namespace ClientChat
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             if (dialog.ShowDialog() == true)
             {
-                Address = dialog.ServerAddressRaw;
+                Address = dialog.ServerAddress;
                 IPAddress = dialog.IPAddress;
                 Port = dialog.Port;
                 Username = dialog.FirstName + " " + dialog.LastName;
                 Thread start = new Thread(new ThreadStart(Connect));
                 start.Start();
                 string message = string.Format("Connecting to server on {0}:{1}", Address, Port);
-                LogMessage(message);
+                StatusMessage = message;
             }
             else Quit();
         }
