@@ -41,20 +41,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logic\Address.cs" />
-    <Compile Include="Logic\ClientService.cs" />
-    <Compile Include="Logic\IServerNotification.cs" />
+    <Compile Include="Protocol\Command.cs" />
+    <Compile Include="Protocol\MessageCommand.cs" />
+    <Compile Include="Services\ClientService.cs" />
+    <Compile Include="Services\IServerNotification.cs" />
     <Compile Include="Logic\TextEncoder.cs" />
-    <Compile Include="Logic\ServerService.cs" />
-    <Compile Include="Logic\Client.cs" />
-    <Compile Include="Logic\IClientService.cs" />
+    <Compile Include="Services\ServerService.cs" />
+    <Compile Include="Services\Client.cs" />
+    <Compile Include="Services\IClientService.cs" />
     <Compile Include="Logic\ConnectionState.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Logic\Server.cs" />
-    <Compile Include="Logic\IServerService.cs" />
+    <Compile Include="Services\Server.cs" />
+    <Compile Include="Services\IServerService.cs" />
     <Compile Include="Logic\User.cs" />
-    <Compile Include="Protocol\ProtocolCommand.cs" />
-    <Compile Include="Protocol\ProtocolParameter.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
