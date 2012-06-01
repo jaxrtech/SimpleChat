@@ -49,7 +49,7 @@ namespace ChatLib
                 IPEndPoint local = new IPEndPoint(IPAddress.Any, port);
 
                 // Bind and listen on the address
-                listener.Bind(local);
+                listener.Bind(local); 
                 listener.Listen(100);
 
                 // Accept connecting client
