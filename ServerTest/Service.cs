@@ -12,7 +12,7 @@ namespace ServerTest
 {
     public class ServerService : IServerService
     {
-        string LogFileName = "log.txt";
+        // string LogFileName = "log.txt";
 
         public ServerService()
         {
