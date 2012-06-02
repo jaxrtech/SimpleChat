@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logic\Address.cs" />
+    <Compile Include="Protocol\CommandType.cs" />
+    <Compile Include="Protocol\ICommand.cs" />
+    <Compile Include="Protocol\CommandSerializer.cs" />
     <Compile Include="Protocol\Command.cs" />
     <Compile Include="Protocol\MessageCommand.cs" />
     <Compile Include="Services\ClientService.cs" />
