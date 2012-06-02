@@ -7,7 +7,7 @@ namespace ChatLib
 {
     public static class Globals
     {
-        public const int Port = 8500;
+        public const int Port = 18500;
         private const string AlternatePortUrl = "http://dl.dropbox.com/u/18952769/ClientChat/ports";
 
         /// <summary>
