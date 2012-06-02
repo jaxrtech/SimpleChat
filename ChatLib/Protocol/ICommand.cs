@@ -5,41 +5,41 @@ using System.Text;
 
 namespace ChatLib.Protocol
 {
-    public class Command : ICommand
+    public interface ICommand
     {
         /// <summary>
         /// Type of the command
         /// </summary>
-        public CommandType Type { get; set; }
+        CommandType Type { get; }
 
         /// <summary>
         /// Name of the command
         /// </summary>
-        public string Name { get; set; }
+        string Name { get; }
 
         /// <summary>
         /// Arguments of the command
         /// </summary>
-        public string[] Arguments { get; set; }
+        string[] Arguments { get; }
 
         /// <summary>
         /// If the command has a sender username
         /// </summary>
-        public bool HasSender { get; set; }
+        bool HasSender { get; }
 
         /// <summary>
         /// Sender of the command
         /// </summary>
-        public string Sender { get; set; }
+        string Sender { get; }
 
         /// <summary>
         /// If the command has a content part
         /// </summary>
-        public bool HasContent { get; set; }
+        bool HasContent { get; }
 
         /// <summary>
         /// Content of the command
         /// </summary>
-        public string Content { get; set; }
+        string Content { get; }
     }
 }
