@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Logic\Address.cs" />
     <Compile Include="Logic\ClientService.cs" />
+    <Compile Include="Logic\HttpHelper.cs" />
     <Compile Include="Logic\IServerNotification.cs" />
     <Compile Include="Logic\TextEncoder.cs" />
     <Compile Include="Logic\ServerService.cs" />

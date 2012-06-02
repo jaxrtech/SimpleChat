@@ -40,15 +40,8 @@ namespace ChatLib
                 {
                     // Get address
                     const string url = "http://automation.whatismyip.com/n09230945.asp";
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                    request.Timeout = 5000;
-                    request.Method = "GET";
-                    WebResponse responce = request.GetResponse();
-                    StreamReader reader = new StreamReader(responce.GetResponseStream(), Encoding.UTF8);
-                    string address = reader.ReadToEnd();
-                    reader.Close();
-                    responce.Close();
-                    // Parse the IP
+                    string address = HttpHelper.Get(url);
+
                     IPAddress ip;
                     Address.TryParseAddress(address, out ip);
                     return ip;
